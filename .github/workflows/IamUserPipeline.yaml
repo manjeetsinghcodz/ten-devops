@@ -35,16 +35,22 @@ jobs:
     - name: Terraform plan
       working-directory: ./iamUserDeploy
       env:
-        AWS_SECRET_KEY_ID: ${{ secrets.IAC_AWS_ACCESS_KEY_ID }}
-        AWS_SECRET_ACCESS_KEY: ${{ secrets.IAC_AWS_SECRET_ACCESS_KEY }}
+        AWS_SECRET_KEY_ID: ${{ secrets.PRVD_ID }}
+        AWS_SECRET_ACCESS_KEY: ${{ secrets.PRVD_KEY }}
       run: |
+        export AWS_ACCESS_KEY_ID=${{ secrets.PRVD_ID }}
+        export AWS_SECRET_ACCESS_KEY=${{ secrets.PRVD_KEY }}
+        export AWS_PROFILE=default
         terraform plan
 
     - name: Terraform Apply
       working-directory: ./iamUserDeploy
       env:
-        AWS_SECRET_KEY_ID: ${{ secrets.IAC_AWS_ACCESS_KEY_ID }}
-        AWS_SECRET_ACCESS_KEY: ${{ secrets.IAC_AWS_SECRET_ACCESS_KEY }}
+        AWS_SECRET_KEY_ID: ${{ secrets.PRVD_ID }}
+        AWS_SECRET_ACCESS_KEY: ${{ secrets.PRVD_KEY }}
       run: |
+        export AWS_ACCESS_KEY_ID=${{ secrets.PRVD_ID }}
+        export AWS_SECRET_ACCESS_KEY=${{ secrets.PRVD_KEY }}
+        export AWS_PROFILE=default
         terraform apply -auto-approve
       
