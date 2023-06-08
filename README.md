@@ -1,2 +1,0 @@
-# ten-devops
-devops repo

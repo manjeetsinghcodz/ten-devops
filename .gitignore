@@ -1,0 +1,7 @@
+###Ignore the files below
+__pycache__
+.idea
+.git
+iamUserDeploy/.terraform/
+iacDeploy/.terraform/
+
