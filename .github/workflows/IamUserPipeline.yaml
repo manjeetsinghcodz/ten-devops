@@ -3,11 +3,8 @@ name: Iam User Deploy
 
 on:
   push:
-    branches:
-      - main
-      - develop
-    paths:
-      - 'iamUserDeploy/**'
+    branches: ['main']
+    paths: ['iamUserDeploy/**']
 jobs:
   DEPLOY:
     runs-on: ubuntu-latest
