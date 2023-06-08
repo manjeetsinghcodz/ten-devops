@@ -5,13 +5,11 @@ name: IaC Deployment
 on:
   push:  #Trigger the workflow during a push on branch develop and branches
     branches:
-      #- develop
+      - develop
       - 'feat/**'
 jobs:
   DEPLOY:
     runs-on: ubuntu-latest
-    needs: BUILD # will run this job only after BUILD job is completed successfully
-
     # Use the Bash shell regardless whether the GitHub Actions runner is ubuntu-latest, macos-latest, or windows-latest
     defaults:
       run:
