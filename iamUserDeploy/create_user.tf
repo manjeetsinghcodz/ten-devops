@@ -12,13 +12,13 @@ resource "aws_iam_user_policy_attachment" "policy_iac" {
   count = "${length(var.arn_policy_iac)}"
   policy_arn = "${element(var.arn_policy_iac,count.index)}"
 }
-
+/*
 resource "aws_iam_user_policy_attachment" "policy_cicd" {
   depends_on = [ aws_iam_user.user ]
   user  = "ten-mse-cicd"
   count = "${length(var.arn_policy_cicd)}"
   policy_arn = "${element(var.arn_policy_cicd,count.index)}"
-}
+}*/
 
 ####Do not out secret on terminal or github workflow runner
 /*

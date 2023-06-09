@@ -7,7 +7,7 @@ resource "aws_cloudwatch_log_group" "log_group" {
   }
 }
 resource "aws_iam_policy" "log_policy" {
-  name = "${var.resource_name}"
+  name = "${var.resource_name}-log"
   policy = jsonencode({
     "Version" : "2012-10-17",
     "Statement" : [
