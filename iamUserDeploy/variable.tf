@@ -3,9 +3,7 @@ variable "username" {
   description = "List of users to be created"
   type = list(string)
   default = [
-    "ten-mse-cicd",
     "ten-mse-iac",
-    "ten-mse",
   ]
 }
 variable "arn_policy_iac" {

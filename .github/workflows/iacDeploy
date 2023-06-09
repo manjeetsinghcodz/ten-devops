@@ -1,0 +1,58 @@
+### IaC
+
+name: IaC Deployment
+
+on:
+  push:  #Trigger the workflow during a push on branch develop and branches
+    branches:
+      - develop
+      - 'feat/**'
+jobs:
+  DEPLOY:
+    runs-on: ubuntu-latest
+    # Use the Bash shell regardless whether the GitHub Actions runner is ubuntu-latest, macos-latest, or windows-latest
+    defaults:
+      run:
+        shell: bash
+    steps:
+    # Checkout the repository to the GitHub Actions runner
+    - name: Checkout
+      uses: actions/checkout@v3
+
+     # Install the latest version of Terraform CLI and configure the Terraform CLI configuration.
+    - name: Install Terraform
+      run: | # install the latest version of terraform with apt on the ubuntu runner
+        wget -O- https://apt.releases.hashicorp.com/gpg | gpg --dearmor | sudo tee /usr/share/keyrings/hashicorp-archive-keyring.gpg
+        echo "deb [signed-by=/usr/share/keyrings/hashicorp-archive-keyring.gpg] https://apt.releases.hashicorp.com $(lsb_release -cs) main" | sudo tee /etc/apt/sources.list.d/hashicorp.list
+        sudo apt update && sudo apt install terraform
+
+    # Initialize a new or existing Terraform working directory by creating initial files, loading any remote state, downloading modules, etc.
+    - name: Terraform Init
+      working-directory: ./iacDeploy #change to ./deploy dir , all tf files are in that directory
+      env:
+        AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }} #load user ten-ci access key and id from secret to execute terraform command init
+        AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }} #load user ten-ci access key and id from secret to execute terraform command init
+      run: | #Export the aws provider credentials into the bash env of ubuntu runner so that terraform can authenticate with AWS
+        export AWS_SECRET_ACCESS_KEY=${{ secrets.TF_KEY }} 
+        export AWS_ACCESS_KEY_ID=${{ secrets.TF_ID }}
+        export AWS_PROFILE=default
+        terraform init
+
+    # Generates an execution plan for Terraform
+    - name: Terraform Plan
+      working-directory: ./iacDeploy
+      env:
+        AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }} #load user ten-ci access key and id from secret to execute terraform command plan
+        AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }} #load user ten-ci access key and id from secret to execute terraform command plan
+      run: | #Run terraform plan with variable(img_tag) from variable.tf to replace with the value of the run_id of the workflow 
+        terraform plan
+
+      # On push to "main", build or change infrastructure according to Terraform configuration files
+      # Note: It is recommended to set up a required "strict" status check in your repository for "Terraform Cloud". See the documentation on "strict" required status checks for more information: https://help.github.com/en/github/administering-a-repository/types-of-required-status-checks
+    - name: Terraform Apply
+      working-directory: ./iacDeploy
+      env:
+        AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }} #load user ten-ci access key and id from secret to execute terraform apply
+        AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }} #load user ten-ci access key and id from secret to execute terraform apply
+      run: | #Run terraform apply with variable(img_tag) declared in variable.tf to be replace with the value of the run_id of the workflow 
+        terraform apply -auto-approve
